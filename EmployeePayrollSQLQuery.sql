@@ -51,3 +51,101 @@ Update Employee_Payroll set Department = 'Bussiness',PhoneNumber = '7073112156',
 
 /*UC9 Extended some columns*/
 alter table Employee_Payroll Add Basic_Pay money null default 0,  Deductions money null default 0, Taxable_Pay money null default 0, Income_Tax money null default 0, Net_Pay money null default 0
+
+/*UC10 Ability to make terissa as part of sales and marketing department*/
+insert into Employee_Payroll(Name,salary,Start,Gender,Department,PhoneNumber,address,Basic_Pay,Deductions,Taxable_Pay,Income_Tax,Net_Pay) 
+values('Terissa','200000.00','2019-01-13','F','Sales and Marketing','Newyork','9986712839',20000,2000,1000,800,18000);
+
+/*UC11 Implementing a  ER diagram */
+/*Created employee roll table*/
+create table EmployeePayroll(
+EmployeeId int primary key identity(1,1),
+FullName varchar(20) not null,
+StartDate date not null,
+Gender varchar(20) not null,
+Address varchar(100) not null,
+DepartmentNumber int not null,
+PhoneNumber bigint not null, 
+);
+
+/*Insert values in to Employee payroll table*/
+insert into EmployeePayroll values('Shashidhar','2020-11-21','M','Bangarpet','001','8073112156')
+insert into EmployeePayroll values('Lalithkumar','2020-10-21','M','Bangalore','002','7073112156')
+
+select * from EmployeePayroll
+select * from Department
+select * from Salary
+
+/*Created department table*/
+create table Department(
+DepartmentNumber int primary key identity(1,1), 
+DepartmentName int not null,
+Location varchar(50) not null,
+EmployeeId int foreign key references EmployeePayroll(EmployeeId)
+);
+
+/*Insert values in to department values*/
+insert into Department values('Computer science','Bangalore',1)
+insert into Department values('Electrical engg','Banarpet',2)
+
+/*Created salary table*/
+create table Salary(
+SalaryId int primary key identity(1,1),
+BasicSalaryPay money not null,
+Deductions money not null,
+Taxable_pay money not null,
+Income_tax money not null,
+Net_pay money not null,
+EmployeeId int foreign key references EmployeePayroll(EmployeeId)
+);
+
+/*Insert values in to salary table*/
+insert into Salary values(10000,1000,1500,2500,900,1);
+insert into Salary values(20000,2000,2500,3500,1900,2);
+
+/*UC12 Retrieves from multiple table*/
+/*Refactor by UC4*/ 
+select * from EmployeePayroll;
+select * from Department;
+select * from Salary;
+
+/*Refactor by UC5*/
+select BasicSalaryPay 
+from Salary INNER JOIN EmployeePayroll
+on Salary.EmployeeId = EmployeePayroll.EmployeeId
+where FullName = 'Lalithkumar';
+
+/*Refactor by UC6*/
+select * from EmployeePayroll
+where StartDate between cast('2020-01-01' AS DATE) and SYSDATETIME();
+
+/*Refactor UC 7*/
+/*To find sum of all salary*/
+select sum(BasicSalaryPay) as 'Sum Of All'
+from Salary INNER JOIN EmployeePayroll 
+on Salary.EmployeeId=EmployeePayroll.EmployeeId
+where Gender='M' group by Gender;
+
+/*To find average salary*/
+select avg(BasicSalaryPay) as 'Average Salary'
+from Salary INNER JOIN EmployeePayroll 
+on Salary.EmployeeId=EmployeePayroll.EmployeeId
+where Gender='M' group by Gender;
+
+/*To find minimum salary*/
+select min(BasicSalaryPay) as 'Minimum Salary'
+from Salary INNER JOIN EmployeePayroll 
+on Salary.EmployeeId=EmployeePayroll.EmployeeId
+where Gender='M' group by Gender;
+
+/*To find maximum salary*/
+select max(BasicSalaryPay) as 'Maximum Salary'
+from Salary INNER JOIN EmployeePayroll 
+on Salary.EmployeeId=EmployeePayroll.EmployeeId
+where Gender='M' group by Gender;
+
+/*To find count of all salary*/
+select count(BasicSalaryPay) as 'Number of Count' 
+from Salary INNER JOIN EmployeePayroll 
+on Salary.EmployeeId=EmployeePayroll.EmployeeId
+where Gender='M' group by Gender;
